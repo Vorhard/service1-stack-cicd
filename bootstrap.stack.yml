@@ -335,7 +335,7 @@ Resources:
                   - {
                       VPCStack: { "Ref" : "VPCStack"},
                       ECSStack: { "Ref" : "ECSStack"},
-                      RepositoryUrl: { "Sub" : "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ServiceName}/${Environment}"},
+                      RepositoryUrl: { "Fn::Sub" : [ "${AccountId}.dkr.ecr.${Region}.amazonaws.com/${ServiceName}/${Environment}", { AccountId: {"Ref" : "AWS::AccountId"}, Region: {"Ref" : "AWS::Region"}, ServiceName: {"Ref" : "ServiceName"}, Environment: {"Ref" : "Environment"} } ] },
                       Environment: { "Ref" : "Environment"}
                     }
               RunOrder: 1
