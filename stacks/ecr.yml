@@ -1,0 +1,17 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+
+  RepositoryName:
+    Type: String
+    Description: RepositoryName
+
+Resources:
+
+  ##############################
+  # ECR Repository
+  ##############################
+
+  Repository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: !Ref RepositoryName
