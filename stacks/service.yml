@@ -13,6 +13,10 @@ Parameters:
     Type: String
     Description: ECS Stack Name
 
+  RepositoryUrl:
+    Type: String
+    Description: ECR Repository Url
+
   DesiredCount:
     Type: Number
     Default: '2'
@@ -89,7 +93,7 @@ Resources:
           Image: !Sub
             - "${URL}:${Version}"
             - {
-                URL: { "Fn::ImportValue" : {"Fn::Sub": "${ECRStack}-Service1RepositoryUrl" } },
+                URL: !Ref RepositoryUrl,
                 Version: !Ref Version
               }
           Memory: 128

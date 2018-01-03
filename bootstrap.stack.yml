@@ -262,7 +262,7 @@ Resources:
                 Repo: !Ref GitHubRepo
                 OAuthToken: !Ref GitHubToken
               RunOrder: 1
-        - Name: ECR
+        - Name: Build
           Actions:
             - Name: ECR
               InputArtifacts:
@@ -329,11 +329,13 @@ Resources:
                       "BuildVersion" : { "Fn::GetParam" : ["BuildOutput", "version.json", "version"]},
                       "VPCStack" : "${VPCStack}",
                       "ECSStack" : "${ECSStack}",
+                      "RepositoryUrl": "${RepositoryUrl}",
                       "Environment" : "${Environment}"
                     }
                   - {
                       VPCStack: { "Ref" : "VPCStack"},
                       ECSStack: { "Ref" : "ECSStack"},
+                      RepositoryUrl: { "Sub" : "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ServiceName}/${Environment}"},
                       Environment: { "Ref" : "Environment"}
                     }
               RunOrder: 1
