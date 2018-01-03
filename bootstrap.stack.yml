@@ -257,83 +257,83 @@ Resources:
                 Repo: !Ref GitHubRepo
                 OAuthToken: !Ref GitHubToken
               RunOrder: 1
-      - Name: ECR
-        Actions:
-          - Name: ECR
-            InputArtifacts:
-              - Name: GitSource
-            OutputArtifacts:
-              - Name: ECRSource
-            ActionTypeId:
-              Category: Deploy
-              Owner: AWS
-              Version: 1
-              Provider: CloudFormation
-            Configuration:
-              TemplatePath: !Sub "GitSource::stacks/ecr.yml"
-              ActionMode: CREATE_UPDATE
-              Capabilities: CAPABILITY_NAMED_IAM
-              RoleArn: !GetAtt CloudFormationRole.Arn
-              StackName:
-                Fn::Join:
-                  - ''
-                  - - Ref: AWS::StackName
-                    - '-service1-ecr-'
-                    - Ref: Environment
-                ParameterOverrides: !Sub |
-                  {
-                    "RepositoryName": "service1/${Environment}"
-                  }
-            RunOrder: 1
-      - Name: Build
-        Actions:
-          - Name: BuildPushImage
-            ActionTypeId:
-              Category: Build
-              Owner: AWS
-              Provider: CodeBuild
-              Version: 1
-            Configuration:
-              ProjectName: !Ref CodeBuildProject
-            InputArtifacts:
-              - Name: GitSource
-              - Name: ECRSource
-            OutputArtifacts:
-              - Name: BuildOutput
-      - Name: Service
-        Actions:
-          - Name: Infrastructure
-            InputArtifacts:
-              - Name: GitSource
-              - Name: ECRSource
-              - Name: BuildOutput
-            ActionTypeId:
-              Category: Deploy
-              Owner: AWS
-              Version: 1
-              Provider: CloudFormation
-            Configuration:
-              TemplatePath: !Sub "GitSource::stacks/service.yml"
-              ActionMode: CREATE_UPDATE
-              Capabilities: CAPABILITY_NAMED_IAM
-              RoleArn: !GetAtt CloudFormationRole.Arn
-              StackName:
-                Fn::Join:
-                  - ''
-                  - - Ref: AWS::StackName
-                    - '-service1-service-'
-                    - Ref: Environment
-              ParameterOverrides: !Sub
-                - |
-                  {
-                    "BuildVersion" : { "Fn::GetParam" : ["BuildOutput", "version.json", "version"]},
-                    "VPCStack" : "${VPCStack}",
-                    "ECSStack" : "${ECSStack}",
-                    "Environment" : "${Environment}"
-                  }
-                - {
-                    VPCStack: { "Ref" : "VPCStack"},
-                    ECSStack: { "Ref" : "ECSStack"},
-                    Environment: { "Ref" : "Environment"}
-                  }
-            RunOrder: 1
+        - Name: ECR
+          Actions:
+            - Name: ECR
+              InputArtifacts:
+                - Name: GitSource
+              OutputArtifacts:
+                - Name: ECRSource
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: 1
+                Provider: CloudFormation
+              Configuration:
+                TemplatePath: !Sub "GitSource::stacks/ecr.yml"
+                ActionMode: CREATE_UPDATE
+                Capabilities: CAPABILITY_NAMED_IAM
+                RoleArn: !GetAtt CloudFormationRole.Arn
+                StackName:
+                  Fn::Join:
+                    - ''
+                    - - Ref: AWS::StackName
+                      - '-service1-ecr-'
+                      - Ref: Environment
+                  ParameterOverrides: !Sub |
+                    {
+                      "RepositoryName": "service1/${Environment}"
+                    }
+              RunOrder: 1
+        - Name: Build
+          Actions:
+            - Name: BuildPushImage
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: 1
+              Configuration:
+                ProjectName: !Ref CodeBuildProject
+              InputArtifacts:
+                - Name: GitSource
+                - Name: ECRSource
+              OutputArtifacts:
+                - Name: BuildOutput
+        - Name: Service
+          Actions:
+            - Name: Infrastructure
+              InputArtifacts:
+                - Name: GitSource
+                - Name: ECRSource
+                - Name: BuildOutput
+              ActionTypeId:
+                Category: Deploy
+                Owner: AWS
+                Version: 1
+                Provider: CloudFormation
+              Configuration:
+                TemplatePath: !Sub "GitSource::stacks/service.yml"
+                ActionMode: CREATE_UPDATE
+                Capabilities: CAPABILITY_NAMED_IAM
+                RoleArn: !GetAtt CloudFormationRole.Arn
+                StackName:
+                  Fn::Join:
+                    - ''
+                    - - Ref: AWS::StackName
+                      - '-service1-service-'
+                      - Ref: Environment
+                ParameterOverrides: !Sub
+                  - |
+                    {
+                      "BuildVersion" : { "Fn::GetParam" : ["BuildOutput", "version.json", "version"]},
+                      "VPCStack" : "${VPCStack}",
+                      "ECSStack" : "${ECSStack}",
+                      "Environment" : "${Environment}"
+                    }
+                  - {
+                      VPCStack: { "Ref" : "VPCStack"},
+                      ECSStack: { "Ref" : "ECSStack"},
+                      Environment: { "Ref" : "Environment"}
+                    }
+              RunOrder: 1
