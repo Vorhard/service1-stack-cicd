@@ -275,7 +275,7 @@ Resources:
                 Version: 1
                 Provider: CloudFormation
               Configuration:
-                TemplatePath: !Sub "GitSource::stacks/ecr.yml"
+                TemplatePath: "GitSource::stacks/ecr.yml"
                 ActionMode: CREATE_UPDATE
                 Capabilities: CAPABILITY_NAMED_IAM
                 RoleArn: !GetAtt CloudFormationRole.Arn
@@ -283,14 +283,11 @@ Resources:
                   Fn::Join:
                     - ''
                     - - Ref: AWS::StackName
-                      - '-'
-                      - Ref: ServiceName
-                      - '-ecr-'
-                      - Ref: Environment
-                  ParameterOverrides: !Sub |
-                    {
-                      "RepositoryName": "${ServiceName}/${Environment}"
-                    }
+                      - '-ecr'
+                ParameterOverrides: !Sub |
+                  {
+                    "RepositoryName": "${ServiceName}/${Environment}"
+                  }
               RunOrder: 1
         - Name: Build
           Actions:
@@ -320,7 +317,7 @@ Resources:
                 Version: 1
                 Provider: CloudFormation
               Configuration:
-                TemplatePath: !Sub "GitSource::stacks/service.yml"
+                TemplatePath: "GitSource::stacks/service.yml"
                 ActionMode: CREATE_UPDATE
                 Capabilities: CAPABILITY_NAMED_IAM
                 RoleArn: !GetAtt CloudFormationRole.Arn
@@ -328,10 +325,7 @@ Resources:
                   Fn::Join:
                     - ''
                     - - Ref: AWS::StackName
-                      - '-'
-                      - Ref: ServiceName
-                      - '-service-'
-                      - Ref: Environment
+                      - '-service'
                 ParameterOverrides: !Sub
                   - |
                     {
