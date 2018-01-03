@@ -289,8 +289,6 @@ Resources:
                     "RepositoryName": "${ServiceName}/${Environment}"
                   }
               RunOrder: 1
-        - Name: Build
-          Actions:
             - Name: BuildPushImage
               ActionTypeId:
                 Category: Build
@@ -301,15 +299,14 @@ Resources:
                 ProjectName: !Ref CodeBuildProject
               InputArtifacts:
                 - Name: GitSource
-                - Name: ECRSource
               OutputArtifacts:
                 - Name: BuildOutput
+              RunOrder: 2
         - Name: Service
           Actions:
             - Name: Infrastructure
               InputArtifacts:
                 - Name: GitSource
-                - Name: ECRSource
                 - Name: BuildOutput
               ActionTypeId:
                 Category: Deploy
