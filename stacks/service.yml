@@ -98,7 +98,7 @@ Resources:
             - "${URL}:${Version}"
             - {
                 URL: !Ref RepositoryUrl,
-                Version: !Ref Version
+                Version: {"Fn::If": ["UseBuildVersion", {"Ref": "BuildVersion"}, { "Ref": "Version" }]}
               }
           Memory: 128
           PortMappings:
