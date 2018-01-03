@@ -27,6 +27,11 @@ Parameters:
     Type: String
     Description: ECS Stack Name
 
+  ServiceName:
+    Type: String
+    Description: Service name.  Lowercase
+    Default: 'service1'
+
 Mappings:
   Branch:
     prod:
@@ -187,7 +192,7 @@ Resources:
               - ecr:InitiateLayerUpload
               - ecr:UploadLayerPart
               - ecr:CompleteLayerUpload
-            Resource: !Sub "arn:aws:ecr:${AWS::Region}:${AWS::AccountId}:repository/${Repository}"
+            Resource: !Sub "arn:aws:ecr:${AWS::Region}:${AWS::AccountId}:repository/${ServiceName}/${Environment}"
           - Effect: Allow
             Action:
               - sns:Publish
@@ -211,7 +216,7 @@ Resources:
           - Name: AWS_DEFAULT_REGION
             Value: !Ref AWS::Region
           - Name: REPOSITORY_URI
-            Value: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/service1/${Environment}"
+            Value: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ServiceName}/${Environment}"
           - Name: APP
             Value: !Ref AWS::StackName
           #- Name: SNS_TOPIC_ARN
@@ -278,11 +283,13 @@ Resources:
                   Fn::Join:
                     - ''
                     - - Ref: AWS::StackName
-                      - '-service1-ecr-'
+                      - '-'
+                      - Ref: ServiceName
+                      - '-ecr-'
                       - Ref: Environment
                   ParameterOverrides: !Sub |
                     {
-                      "RepositoryName": "service1/${Environment}"
+                      "RepositoryName": "${ServiceName}/${Environment}"
                     }
               RunOrder: 1
         - Name: Build
@@ -321,7 +328,9 @@ Resources:
                   Fn::Join:
                     - ''
                     - - Ref: AWS::StackName
-                      - '-service1-service-'
+                      - '-'
+                      - Ref: ServiceName
+                      - '-service-'
                       - Ref: Environment
                 ParameterOverrides: !Sub
                   - |
