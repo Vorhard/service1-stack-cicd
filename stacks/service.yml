@@ -27,6 +27,10 @@ Parameters:
     Default: '/service1'
     Description: Service path
 
+  BuildVersion:
+    Type: String
+    Description: Latest build version
+
   Version:
     Type: String
     Default: ''
