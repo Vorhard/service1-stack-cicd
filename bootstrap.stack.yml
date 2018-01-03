@@ -27,6 +27,10 @@ Parameters:
     Type: String
     Description: ECS Stack Name
 
+  AppName:
+    Type: String
+    Description: Application name
+
   ServiceName:
     Type: String
     Description: Service name.  Lowercase
@@ -192,7 +196,7 @@ Resources:
               - ecr:InitiateLayerUpload
               - ecr:UploadLayerPart
               - ecr:CompleteLayerUpload
-            Resource: !Sub "arn:aws:ecr:${AWS::Region}:${AWS::AccountId}:repository/${ServiceName}/${Environment}"
+            Resource: !Sub "arn:aws:ecr:${AWS::Region}:${AWS::AccountId}:repository/${AppName}/${ServiceName}/${Environment}"
           - Effect: Allow
             Action:
               - sns:Publish
@@ -216,17 +220,16 @@ Resources:
           - Name: AWS_DEFAULT_REGION
             Value: !Ref AWS::Region
           - Name: REPOSITORY_URI
-            Value: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ServiceName}/${Environment}"
+            Value: !Sub "${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${AppName}/${ServiceName}/${Environment}"
           - Name: APP
-            Value: !Ref AWS::StackName
+            Value: !Ref AppName
           #- Name: SNS_TOPIC_ARN
           #  Value: !If [NeedsBuildNotification, !Ref "BuildTopic", '']
       Name:
         Fn::Join:
           - ''
           - - Ref: AWS::StackName
-            - '-code-build-'
-            - Ref: Environment
+            - '-code-build'
       ServiceRole: !GetAtt CodeBuildRole.Arn
       Source:
         Type: CODEPIPELINE
@@ -282,11 +285,14 @@ Resources:
                 StackName:
                   Fn::Join:
                     - ''
-                    - - Ref: AWS::StackName
-                      - '-ecr'
+                    - - Ref: AppName
+                      - '-'
+                      - Ref: ServiceName
+                      - '-ecr-'
+                      - Ref: Environment
                 ParameterOverrides: !Sub |
                   {
-                    "RepositoryName": "${ServiceName}/${Environment}"
+                    "RepositoryName": "${AppName}/${ServiceName}/${Environment}"
                   }
               RunOrder: 1
             - Name: BuildPushImage
@@ -321,8 +327,11 @@ Resources:
                 StackName:
                   Fn::Join:
                     - ''
-                    - - Ref: AWS::StackName
-                      - '-service'
+                    - - Ref: AppName
+                      - '-'
+                      - Ref: ServiceName
+                      - '-service-'
+                      - Ref: Environment
                 ParameterOverrides: !Sub
                   - |
                     {
@@ -335,7 +344,7 @@ Resources:
                   - {
                       VPCStack: { "Ref" : "VPCStack"},
                       ECSStack: { "Ref" : "ECSStack"},
-                      RepositoryUrl: { "Fn::Sub" : [ "${AccountId}.dkr.ecr.${Region}.amazonaws.com/${ServiceName}/${Environment}", { AccountId: {"Ref" : "AWS::AccountId"}, Region: {"Ref" : "AWS::Region"}, ServiceName: {"Ref" : "ServiceName"}, Environment: {"Ref" : "Environment"} } ] },
+                      RepositoryUrl: { "Fn::Sub" : [ "${AccountId}.dkr.ecr.${Region}.amazonaws.com/${AppName}/${ServiceName}/${Environment}", { AccountId: {"Ref" : "AWS::AccountId"}, Region: {"Ref" : "AWS::Region"}, ServiceName: {"Ref" : "ServiceName"}, Environment: {"Ref" : "Environment"} } ] },
                       Environment: { "Ref" : "Environment"}
                     }
               RunOrder: 1
