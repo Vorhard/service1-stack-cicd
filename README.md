@@ -1,27 +1,7 @@
 # ECS Service with Continuous Integration
-Use this template to add continuous integration to your ECS service.
+This is a service project associated with this application - [Services Stack with CI/CD](https://github.com/thestackshack/services-stack-cicd).
 
-When you push your commits CodePipeline and CodeBuild will build and deploy a new image to your ECR docker registry.
+## Deploy to Production
+Deployments to the sandbox environment are automatic.  After each commit and subsequent build the image is automatically pushed to the service.
 
-You can then deploy that new version to your service.
-
-## Setup
-See the [Services Stack](https://github.com/thestackshack/services-stack) for setup instructions.
-
-Before you `stack-up` this stack you need to push an image to your ECR.
-
-## Stack Up
-```
-cim stack-up --profile=bluefin --env="version=<first-version>"
-```
-
-## Deploy new version
-After you push your commits, a new image will be built and pushed to your ECR repo.  To deploy that new version to your ECS service, run the `stack-up` command with the new version.
-```
-cim stack-up --profile=bluefin --env="version=<new-version>"
-```
-
-## Build Notifications
-You can enable build notification via the `NotificationEmail` and/or `NotificationSMS` input params.
-
-When set you will receive a notification when your new ECR images are ready.
+Production deployments are automatic by default.  To manually publish an image to production update the `Version` parameter in the [stacks/service.stack.json](stacks/service.stack.json) stack and them commit your changes to Git.  This will trigger the Infrastructure to update and deploy the new version.
