@@ -9,7 +9,7 @@ const HOST = '0.0.0.0';
 // App
 const app = express();
 app.get('/*', (req, res) => {
-    res.send('Thanks for using CIM!  '+req.path+'\n');
+    res.send('Services Stack with CI/CD!  '+req.path+'\n');
 });
 
 app.listen(PORT, HOST);
