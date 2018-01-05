@@ -37,6 +37,10 @@ Parameters:
     Default: ''
     Description: Service version
 
+  ListenerRulePriority:
+    Type: Number
+    Default: 2
+
 Conditions:
   UseBuildVersion: !Or
     - !Equals [!Ref Environment, 'sandbox']
@@ -132,7 +136,7 @@ Resources:
       ListenerArn:
         Fn::ImportValue:
           !Sub "${ECSStack}-LoadBalancerListener"
-      Priority: 2
+      Priority: !Ref ListenerRulePriority
       Conditions:
         - Field: path-pattern
           Values:
