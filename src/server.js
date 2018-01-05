@@ -9,7 +9,7 @@ const HOST = '0.0.0.0';
 // App
 const app = express();
 app.get('/*', (req, res) => {
-    res.send('Services Stack with CI/CD! v5  '+req.path+'\n');
+    res.send('Services Stack with CI/CD! v6  '+req.path+'\n');
 });
 
 app.listen(PORT, HOST);
