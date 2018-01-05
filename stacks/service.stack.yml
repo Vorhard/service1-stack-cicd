@@ -20,7 +20,7 @@ Parameters:
 
   DesiredCount:
     Type: Number
-    Default: '2'
+    Default: '1'
     Description: Desired task count
 
   Path:
